@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zekufi - Web3 Social Media Strategist</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background inspired by PFP */
+            color: #e6e6e6; /* Light text color */
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+        .hero-background {
+            background-image: url('image.png'); /* Placeholder for Zekufi's PFP */
+            background-size: cover;
+            background-position: center center; /* Centered horizontally and vertically */
+            background-attachment: fixed; /* Parallax effect for desktop */
+        }
+
+        /* Adjust background attachment for mobile for better performance and consistency */
+        @media (max-width: 768px) {
+            .hero-background {
+                background-attachment: scroll;
+            }
+        }
+
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay for readability */
+        }
+        /* Custom button styling */
+        .btn-primary {
+            @apply inline-block px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-700 transition duration-300 ease-in-out transform hover:scale-105;
+        }
+        .btn-secondary {
+            @apply inline-block px-6 py-2 border border-purple-500 text-purple-300 rounded-full hover:bg-purple-700 hover:bg-opacity-20 transition duration-300 ease-in-out;
+        }
+        .section-title {
+            @apply text-4xl md:text-5xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500;
+        }
+        .card {
+            @apply bg-gray-800 bg-opacity-70 rounded-xl p-6 shadow-xl border border-gray-700;
+        }
+
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0; /* Position from right */
+            width: 80%; /* Adjusted width for a side panel look */
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            background-color: rgba(13, 17, 23, 0.98); /* Dark background with slight transparency */
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align items to top */
+            padding-top: 80px; /* Space for close button and content */
+            align-items: center;
+            transform: translateX(100%); /* Start off-screen to the right */
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, visibility 0s 0.4s; /* Transition properties */
+            opacity: 0; /* Start invisible */
+            visibility: hidden; /* Start hidden */
+        }
+        .mobile-menu.open {
+            transform: translateX(0); /* Slide into view */
+            opacity: 1; /* Become fully opaque */
+            visibility: visible; /* Become visible */
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, visibility 0s; /* No delay for visibility when opening */
+        }
+        .mobile-menu a {
+            @apply text-white text-2xl my-3 font-semibold hover:text-purple-400 transition duration-200 opacity-0; /* Initial opacity for fade-in */
+            transform: translateY(20px); /* Initial slight offset for slide-in */
+        }
+        .mobile-menu.open a {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out; /* Animation for individual links */
+        }
+        /* Staggered animation for links */
+        .mobile-menu.open a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu.open a:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-menu.open a:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-menu.open a:nth-child(4) { transition-delay: 0.4s; }
+        .mobile-menu.open a:nth-child(5) { transition-delay: 0.5s; }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 25px; /* Adjust close button position */
+            right: 25px;
+            font-size: 2.2rem; /* Slightly smaller */
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            border-radius: 50%;
+            padding: 5px;
+        }
+        .mobile-menu-close:hover {
+            transform: rotate(90deg);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header/Navigation -->
+        <header class="bg-gray-900 bg-opacity-80 backdrop-blur-sm p-4 sticky top-0 z-50 shadow-lg">
+            <nav class="container mx-auto flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-white tracking-wider">ZekuFi</a>
+                <div class="space-x-6 hidden md:flex">
+                    <a href="#hero" class="text-gray-300 hover:text-white transition duration-200">Home</a>
+                    <a href="#problem" class="text-gray-300 hover:text-white transition duration-200">Problem</a>
+                    <a href="#about" class="text-gray-300 hover:text-white transition duration-200">About</a>
+                    <a href="#services" class="text-gray-300 hover:text-white transition duration-200">Services</a>
+                    <a href="#contact" class="btn-secondary">Contact</a>
+                </div>
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" class="md:hidden text-white text-2xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+            <button id="mobile-menu-close" class="mobile-menu-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <nav class="flex flex-col items-center">
+                <a href="#hero" class="mobile-nav-link" data-section="hero">Home</a>
+                <a href="#problem" class="mobile-nav-link" data-section="problem">Problem</a>
+                <a href="#about" class="mobile-nav-link" data-section="about">About</a>
+                <a href="#services" class="mobile-nav-link" data-section="services">Services</a>
+                <a href="#contact" class="mobile-nav-link" data-section="contact">Contact</a>
+            </nav>
+        </div>
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero-background relative h-screen flex items-center justify-center text-center">
+            <div class="overlay absolute inset-0"></div>
+            <div class="relative z-10 px-4">
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 animate-fade-in-up">
+                    Engineer Your Web3 Presence
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10 animate-fade-in-up delay-200">
+                    Zekufi helps serious Web3 projects build a commanding social media presence that turns heads and keeps them watching.
+                </p>
+                <a href="#contact" class="btn-primary animate-fade-in-up delay-400">
+                    Let's Fix Your X Presence
+                </a>
+            </div>
+        </section>
+
+        <!-- The Core Problem Section -->
+        <section id="problem" class="py-20 px-4 bg-gray-900">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="section-title">The Web3 Presence Problem</h2>
+                <div class="bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-700 text-lg leading-relaxed">
+                    <p class="mb-4">Most Web3 projects don’t have a visibility problem. They have a presence problem.</p>
+                    <p class="mb-4">Presence is what makes people stop scrolling. Presence is what makes a project feel alive — even when there’s no mint, no raise, no announcement.</p>
+                    <p class="mb-4">But here’s what I’ve seen happen over and over again:</p>
+                    <p class="mb-4 pl-4 border-l-4 border-purple-500 italic">
+                        A project launches. The timeline is noisy for 3 days.
+                        Then… silence.
+                    </p>
+                    <p class="mb-4">The team is still building. The vision is still strong. But on X? No one can tell. Because no one feels it.</p>
+                    <p>I’ve seen great projects get buried, not because they lacked innovation — but because they lacked intention on social. No rhythm. No story. No system. Just random updates hoping to catch attention.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Zekufi Solution Section -->
+        <section id="solution" class="py-20 px-4 bg-gray-800">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="section-title">Engineering Your Presence</h2>
+                <p class="text-xl leading-relaxed">
+                    That’s where I come in.
+                </p>
+                <p class="text-xl leading-relaxed mt-4">
+                    As a Social Media Manager, my job isn’t just to post.
+                    It’s to engineer presence.
+                    To build a system that turns heads — and keeps them watching.
+                </p>
+            </div>
+        </section>
+
+        <!-- About Zekufi / Portfolio Summary -->
+        <section id="about" class="py-20 px-4 bg-gray-900">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="section-title">Meet ZekuFi: Your Web3 Social Media Strategist</h2>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="card">
+                        <p class="text-lg mb-4 leading-relaxed">
+                            Hey, I’m ZekuFi — a Web3-native Social Media Strategist.
+                            I help crypto projects engineer visibility, shape culture, and build presence where it matters most — on X.
+                        </p>
+                        <p class="text-lg leading-relaxed">
+                            From NFT lore to DeFi narrative to meme coin momentum, I turn timelines into territory.
+                            I’ve worked across Aptos, Sui, and Solana ecosystems — crafting brand voices, executing presence campaigns, and leading community plays that move the needle.
+                            My focus? Helping founders go from “good idea” to undeniable brand.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-6 text-purple-300">What I Bring:</h3>
+                        <ul class="space-y-4 text-lg">
+                            <li class="flex items-center"><i class="fas fa-bullhorn text-purple-400 mr-3"></i> Narrative-led Campaigns</li>
+                            <li class="flex items-center"><i class="fas fa-network-wired text-purple-400 mr-3"></i> Ecosystem-Native Positioning (Aptos, Sui, Solana)</li>
+                            <li class="flex items-center"><i class="fas fa-palette text-purple-400 mr-3"></i> Meme and Visual Direction (mascots, banners, quote cards)</li>
+                            <li class="flex items-center"><i class="fas fa-user-tie text-purple-400 mr-3"></i> Founder-led Brand Storytelling</li>
+                            <li class="flex items-center"><i class="fas fa-users text-purple-400 mr-3"></i> Discord & Engagement Systems (contests, roles, loops)</li>
+                            <li class="flex items-center"><i class="fas fa-calendar-alt text-purple-400 mr-3"></i> Notion-Powered Content Ops (7–30 day systems, multi-post calendars)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Services / Skills -->
+        <section id="services" class="py-20 px-4 bg-gray-800">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="section-title">Core Competencies: ZekuFi | Social Media Strategist (Web3 Ecosystems)</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Brand Strategy & Ecosystem Positioning -->
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-4 text-pink-400">Brand Strategy & Ecosystem Positioning</h3>
+                        <ul class="list-disc list-inside space-y-2 text-md">
+                            <li>Designed presence systems across Aptos, Sui, and Solana ecosystems</li>
+                            <li>Crafted founder-led brand arcs with emotional, meme, and cultural hooks</li>
+                        </ul>
+                    </div>
+                    <!-- Content Systems & Campaign Planning -->
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-4 text-pink-400">Content Systems & Campaign Planning</h3>
+                        <ul class="list-disc list-inside space-y-2 text-md">
+                            <li>Built multi-week content calendars in Notion (daily themes, visuals, engagement flow)</li>
+                            <li>Created structured rollouts for launches, whitelist drives, and awareness arcs</li>
+                        </ul>
+                    </div>
+                    <!-- Copywriting & Visual Direction -->
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-4 text-pink-400">Copywriting & Visual Direction</h3>
+                        <ul class="list-disc list-inside space-y-2 text-md">
+                            <li>Wrote viral threads, meme posts, and authority content for NFT, DeFi & wallet projects</li>
+                            <li>Directed mascot styles, brand templates, and post visuals for brand recall</li>
+                        </ul>
+                    </div>
+                    <!-- Community Growth & Engagement Tactics -->
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-4 text-pink-400">Community Growth & Engagement Tactics</h3>
+                        <ul class="list-disc list-inside space-y-2 text-md">
+                            <li>Launched contests (threads, invites, quizzes, memes) to build community loops</li>
+                            <li>Designed Discord incentive systems: roles, culture moments, growth touchpoints</li>
+                        </ul>
+                    </div>
+                    <!-- Audit & Pitch Operations -->
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-4 text-pink-400">Audit & Pitch Operations</h3>
+                        <ul class="list-disc list-inside space-y-2 text-md">
+                            <li>Delivered clean one-pager visibility audits with presence breakdowns</li>
+                            <li>Ran DM outreach campaigns that convert insights into gigs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Call to Action -->
+        <section class="py-20 px-4 bg-gray-900 text-center">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="section-title">Ready to Transform Your Presence?</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
+                    If your vision is strong but your presence doesn’t match it — Let’s fix that.
+                </p>
+                <p class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 mb-12">
+                    Because in Web3, visibility isn’t luck. It’s engineered.
+                </p>
+                <a href="#contact" class="btn-primary">
+                    Schedule a Consultation
+                </a>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-4 bg-gray-800">
+            <div class="container mx-auto max-w-3xl">
+                <h2 class="section-title">Schedule Your Consultation</h2>
+                <div class="card p-8">
+                    <!-- Calendly Inline Widget (Replace with Zekufi's actual Calendly link) -->
+                    <div class="calendly-inline-widget" data-url="https://calendly.com/zekufivoyager" style="min-width:320px;height:700px;"></div>
+                    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                    <p class="text-sm text-gray-500 mt-6 text-center">
+                    </p>
+
+                    <div class="mt-12 text-center">
+                        <h3 class="text-2xl font-semibold mb-6 text-purple-300">Connect with Zekufi:</h3>
+                        <div class="flex justify-center space-x-6 text-4xl">
+                            <a href="https://t.me/zekuFii_voyager" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300" aria-label="Telegram">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="https://x.com/@zekuFi_voyager" target="_blank" class="text-gray-400 hover:text-white transition duration-300" aria-label="X (Twitter)">
+                                <i class="fab fa-twitter"></i> <!-- Using twitter icon as a common alternative for X -->
+                            </a>
+                            <a href="https://linkedin.com/in/zekufi_linkedin_placeholder" target="_blank" class="text-blue-600 hover:text-blue-500 transition duration-300" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="https://discord.com/users/zekufi_discord_placeholder" target="_blank" class="text-purple-500 hover:text-purple-400 transition duration-300" aria-label="Discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-6">
+                
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 py-8 px-4 mt-auto">
+            <div class="container mx-auto text-center text-gray-400">
+                <p>&copy; 2024 ZekuFi. All rights reserved.</p>
+                <div class="flex justify-center space-x-6 mt-4 text-2xl">
+                    <a href="https://t.me/zekuFii_voyager" target="_blank" class="hover:text-white transition duration-300" aria-label="Telegram">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="https://x.com/@zekuFi_voyager" target="_blank" class="hover:text-white transition duration-300" aria-label="X (Twitter)">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/zekufi_linkedin_placeholder" target="_blank" class="hover:text-white transition duration-300" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://discord.com/users/zekufi_discord_placeholder" target="_blank" class="hover:text-white transition duration-300" aria-label="Discord">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        // Toggle menu open
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+        });
+
+        // Close menu
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+
+        // Close menu when a link is clicked
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = ''; // Restore scrolling
+
+                // Smooth scroll to section
+                const sectionId = link.getAttribute('data-section');
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add event listener for desktop navigation links for smooth scrolling
+        document.querySelectorAll('header nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
